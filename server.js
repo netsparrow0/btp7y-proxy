@@ -1,31 +1,26 @@
 import express from "express";
-import puppeteer from "puppeteer";
 
 const app = express();
 
 app.get("/btp7y", async (req, res) => {
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+    const url = "https://m.investing.com/rates-bonds/italy-7-year-bond-yield";
 
-    const page = await browser.newPage();
-    await page.goto("https://www.investing.com/rates-bonds/italy-7-year-bond-yield", {
-      waitUntil: "domcontentloaded"
-    });
+    const html = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0" }
+    }).then(r => r.text());
 
-    const value = await page.$eval(
-      ".instrument-price_last__KQzyA",
-      el => el.innerText
-    );
+    const match = html.match(/<span class="last-price-value">([^<]+)<\/span>/);
 
-    await browser.close();
-    res.send(value);
+    if (!match) {
+      return res.status(500).send("N/D");
+    }
+
+    res.send(match[1].trim());
   } catch (err) {
-    res.send("Errore: " + err.message);
+    res.status(500).send("Errore: " + err.message);
   }
 });
 
 app.listen(3000, () => console.log("Proxy attivo sulla porta 3000"));
+
