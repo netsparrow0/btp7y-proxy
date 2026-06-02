@@ -7,8 +7,10 @@ app.get("/btp7y", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
+      executablePath: puppeteer.executablePath(),
       args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
+
 
     const page = await browser.newPage();
     await page.goto("https://www.investing.com/rates-bonds/italy-7-year-bond-yield", {
