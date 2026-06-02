@@ -2,6 +2,7 @@ import express from "express";
 
 const app = express();
 
+// PROXY: scarica la pagina target
 app.get("/proxy", async (req, res) => {
   try {
     const target = req.query.url;
@@ -17,6 +18,7 @@ app.get("/proxy", async (req, res) => {
   }
 });
 
+// EXTRACT: scarica la pagina e applica la regex
 app.get("/extract", async (req, res) => {
   try {
     const { url, regex } = req.query;
@@ -37,6 +39,5 @@ app.get("/extract", async (req, res) => {
   }
 });
 
-
+// AVVIO SERVER
 app.listen(3000, () => console.log("Proxy attivo sulla porta 3000"));
-
