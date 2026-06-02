@@ -1,13 +1,14 @@
 import express from "express";
-import { chromium } from "playwright";
+import puppeteer from "puppeteer";
 
 const app = express();
 
 app.get("/btp7y", async (req, res) => {
   try {
-    const browser = await chromium.launch({
+    const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox"]
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
 
     const page = await browser.newPage();
@@ -15,7 +16,10 @@ app.get("/btp7y", async (req, res) => {
       waitUntil: "domcontentloaded"
     });
 
-    const value = await page.locator(".instrument-price_last__KQzyA").innerText();
+    const value = await page.$eval(
+      ".instrument-price_last__KQzyA",
+      el => el.innerText
+    );
 
     await browser.close();
     res.send(value);
@@ -25,4 +29,3 @@ app.get("/btp7y", async (req, res) => {
 });
 
 app.listen(3000, () => console.log("Proxy attivo sulla porta 3000"));
-
