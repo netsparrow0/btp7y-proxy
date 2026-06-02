@@ -7,9 +7,8 @@ const app = express();
 app.get("/btp7y", async (req, res) => {
   try {
       const browser = await puppeteer.launch({
-        headless: "new",
-        executablePath: findChromium(),
-        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+         headless: "new",
+         args: ["--no-sandbox", "--disable-setuid-sandbox"]
       });
 
 
