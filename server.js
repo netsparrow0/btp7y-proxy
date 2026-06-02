@@ -1,15 +1,16 @@
 import express from "express";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import { execSync } from "child_process";
 
 const app = express();
 
 app.get("/btp7y", async (req, res) => {
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: puppeteer.executablePath(),
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+      const browser = await puppeteer.launch({
+        headless: "new",
+        executablePath: findChromium(),
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      });
 
 
     const page = await browser.newPage();
@@ -30,3 +31,12 @@ app.get("/btp7y", async (req, res) => {
 });
 
 app.listen(3000, () => console.log("Proxy attivo sulla porta 3000"));
+
+function findChromium() {
+  try {
+    return execSync("which chromium-browser").toString().trim();
+  } catch {
+    return execSync("which chromium").toString().trim();
+  }
+}
+
