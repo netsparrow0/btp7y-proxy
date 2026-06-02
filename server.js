@@ -1,30 +1,26 @@
 import express from "express";
-import puppeteer from "puppeteer";
+import { chromium } from "playwright";
 
 const app = express();
 
 app.get("/btp7y", async (req, res) => {
   try {
-      const browser = await puppeteer.launch({
-         headless: "new",
-         args: ["--no-sandbox", "--disable-setuid-sandbox"]
-      });
-
+    const browser = await chromium.launch({
+      headless: true,
+      args: ["--no-sandbox"]
+    });
 
     const page = await browser.newPage();
     await page.goto("https://www.investing.com/rates-bonds/italy-7-year-bond-yield", {
-      waitUntil: "networkidle2"
+      waitUntil: "domcontentloaded"
     });
 
-    await page.waitForSelector(".last-price-value");
-
-    const value = await page.$eval(".last-price-value", el => el.textContent.trim());
+    const value = await page.locator(".instrument-price_last__KQzyA").innerText();
 
     await browser.close();
-
     res.send(value);
   } catch (err) {
-    res.status(500).send("Errore: " + err.message);
+    res.send("Errore: " + err.message);
   }
 });
 
