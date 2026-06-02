@@ -1,5 +1,5 @@
 import express from "express";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import { execSync } from "child_process";
 
 const app = express();
