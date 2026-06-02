@@ -2,21 +2,16 @@ import express from "express";
 
 const app = express();
 
-app.get("/btp7y", async (req, res) => {
+app.get("/proxy", async (req, res) => {
   try {
-    const url = "https://m.investing.com/rates-bonds/italy-7-year-bond-yield";
+    const target = req.query.url;
+    if (!target) return res.status(400).send("Missing url parameter");
 
-    const html = await fetch(url, {
+    const html = await fetch(target, {
       headers: { "User-Agent": "Mozilla/5.0" }
     }).then(r => r.text());
 
-    const match = html.match(/<span class="last-price-value">([^<]+)<\/span>/);
-
-    if (!match) {
-      return res.status(500).send("N/D");
-    }
-
-    res.send(match[1].trim());
+    res.send(html);
   } catch (err) {
     res.status(500).send("Errore: " + err.message);
   }
